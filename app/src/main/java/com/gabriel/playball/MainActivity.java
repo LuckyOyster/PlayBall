@@ -22,7 +22,7 @@ public class MainActivity extends Activity {
     public int screenHeight;
     public float directionX=40;
     public float directionY=40;
-    public float cicleR=30;
+    public float cicleR=10;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
