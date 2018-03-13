@@ -24,6 +24,5 @@ public class MainActivity extends Activity {
         screenWidth=displayMetrics.widthPixels;
         screenHeight=displayMetrics.heightPixels;
 
-
     }
 }

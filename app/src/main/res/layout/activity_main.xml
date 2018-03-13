@@ -3,11 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.gabriel.playball.MainActivity">
+    tools:context="com.gabriel.playball.MainActivity"
+    android:background="@color/colorDark">
 
-    <ImageView
+    <com.gabriel.playball.drawBall
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorPrimary"/>
-
+        android:layout_height="match_parent"/>
 </android.support.constraint.ConstraintLayout>
