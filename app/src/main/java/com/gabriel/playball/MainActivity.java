@@ -20,6 +20,9 @@ public class MainActivity extends Activity {
 
     public int screenWidth;
     public int screenHeight;
+    public float directionX=40;
+    public float directionY=40;
+    public float cicleR=30;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,9 +38,7 @@ public class MainActivity extends Activity {
 
     public class drawBall extends View {
 
-        public float directionX=40;
-        public float directionY=40;
-        public float cicleR=100;
+
 
         private Paint paint=new Paint();
 
