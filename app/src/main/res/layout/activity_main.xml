@@ -6,7 +6,7 @@
     tools:context="com.gabriel.playball.MainActivity"
     android:background="@color/colorDark">
 
-    <com.gabriel.playball.drawBall
+    <com.gabriel.playball.MainActivity.drawBall
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </android.support.constraint.ConstraintLayout>
