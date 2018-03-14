@@ -13,5 +13,5 @@ public class BallPerformance implements Serializable {
     public float directionY=40;
     public float cicleR=10;
     public int color= Color.WHITE;
-    public int controller=1;
+    public int controller=0;
 }

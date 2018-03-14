@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
         ball.directionX=sharedPreferences.getFloat("X",40);
         ball.directionY=sharedPreferences.getFloat("Y",40);
         ball.cicleR=sharedPreferences.getFloat("R",40);
-        ball.controller=sharedPreferences.getInt("Control",1);
+        ball.controller=sharedPreferences.getInt("Control",0);
         ball.color=sharedPreferences.getInt("Color",Color.WHITE);
 
 
