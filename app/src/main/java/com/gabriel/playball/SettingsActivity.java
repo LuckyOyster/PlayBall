@@ -4,12 +4,18 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,14 +29,21 @@ public class SettingsActivity extends Activity {
 
 
     private final String[] itemColor={"White","Red","Blue","Green"};
-    private final String[] itemControl={"Userage","Gravity"};
-    private ListView listView;
+    private final String[] itemControl={"Manual","Gravity"};
+    private final String warningStr="1.可选白、红、蓝、绿四种颜色\n2.直径大小范围1-100，否则不能生效\n" +
+            "3.设置后必须重启app设置才能生效";
+
     private BallPerformance ballSettings;
+
     private AlertDialog.Builder colorDialog;
-    private TextView selectResult;
     private String colorResult;
-    private List<Map<String,Object>> adapterList;
-    private Map<String,Object> flushMap;
+    private AlertDialog.Builder controlerDialog;
+    private String controlerResult;
+
+    private TextView colorView;
+    private TextView controlView;
+    private EditText diameterView;
+    private TextView warning;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,66 +52,71 @@ public class SettingsActivity extends Activity {
 
         ballSettings=(BallPerformance)getIntent().getSerializableExtra("performance");
 
-        listView=(ListView)findViewById(android.R.id.list);
-        selectResult=(TextView)findViewById(R.id.settingResult);
+        colorView=(TextView)findViewById(R.id.colorResult);
+        controlView=(TextView)findViewById(R.id.controlResult);
+        diameterView=(EditText)findViewById(R.id.diameterResult);
+        warning=(TextView) findViewById(R.id.warning);
+        warning.setText(warningStr);
 
-        adapterList=getData();
-        final SimpleAdapter simpleAdapter =new SimpleAdapter(this,adapterList,R.layout.layout_adapter,
-                new String[]{"Title","Performance"},
-                new int[]{R.id.settingTitle,R.id.settingResult});
-        listView.setAdapter(simpleAdapter);
+        initSettings();
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        colorView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position){
-                    case 0:
-                        showColorSelect();
-                        flushMap=adapterList.get(0);
-                        flushMap.put("Performance",colorResult);
-                        simpleAdapter.notifyDataSetChanged();
-                        break;
-                }
+            public void onClick(View v) {
+                showColorSelect();
+            }
+        });
+
+        controlView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showControlerSelect();
+                initSettings();
             }
         });
 
     }
 
-    private List<Map<String,Object>> getData(){
-        List<Map<String,Object>> list =new ArrayList<Map<String,Object>>();
-        Map<String,Object> mapColor=new HashMap<String,Object>();
-        Map<String,Object> mapControl=new HashMap<String,Object>();
-        Map<String,Object> mapSize=new HashMap<String,Object>();
-
-        mapColor.put("Title","Select Color:");
-        switch(ballSettings.color){
-            case Color.WHITE:
-                mapColor.put("Performance","White");
-                break;
-            case Color.RED:
-                mapColor.put("Performance","Red");
-                break;
-            case Color.BLUE:
-                mapColor.put("Performance","Blue");
-                break;
-            case Color.GREEN:
-                mapColor.put("Performance","Green");
-                break;
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SharedPreferences sharedPreferences = getSharedPreferences("Settings", 0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        float temp=Float.valueOf(diameterView.getText().toString());
+        if(temp>=1||temp<=100){
+            ballSettings.cicleR=temp;
+        }else{
+            Toast.makeText(SettingsActivity.this,"The diameter is wrong!",Toast.LENGTH_SHORT).show();
         }
-        list.add(mapColor);
+        editor.putFloat("R", ballSettings.cicleR);
+        editor.putInt("Color",ballSettings.color);
+        editor.putInt("Control",ballSettings.controller);
+        editor.commit();
+        Toast.makeText(SettingsActivity.this,"Please restart this app for update the config file!!!",Toast.LENGTH_LONG).show();
+        SettingsActivity.this.finish();
 
-        mapControl.put("Title","Select Controller:");
-        mapControl.put("Performance",itemControl[ballSettings.controller]);
-        list.add(mapControl);
-
-        mapSize.put("Title","Select Diameter:");
-        mapSize.put("Performance",ballSettings.cicleR);
-        list.add(mapSize);
-
-        return list;
     }
 
-    private void showColorSelect(){
+    private void initSettings(){
+        switch(ballSettings.color){
+            case Color.WHITE:
+                colorView.setText("White");
+                break;
+            case Color.RED:
+                colorView.setText("Red");
+                break;
+            case Color.BLUE:
+                colorView.setText("Blue");
+                break;
+            case Color.GREEN:
+                colorView.setText("Green");
+                break;
+        }
+        controlView.setText(itemControl[ballSettings.controller]);
+        diameterView.setText(String.valueOf(ballSettings.cicleR));
+    }
+
+    private void showColorSelect() {
         colorDialog=new AlertDialog.Builder(SettingsActivity.this);
         colorDialog.setTitle("Select Color:").setItems(itemColor, new DialogInterface.OnClickListener() {
             @Override
@@ -112,14 +130,40 @@ public class SettingsActivity extends Activity {
                         ballSettings.color=Color.RED;
                         break;
                     case 2:
-                        ballSettings.color=Color.GREEN;
+                        ballSettings.color=Color.BLUE;
                         break;
                     case 3:
-                        ballSettings.color=Color.BLUE;
+                        ballSettings.color=Color.GREEN;
                         break;
                 }
             }
         });
+        colorDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                initSettings();
+            }
+        });
         colorDialog.create().show();
     }
+
+    private void showControlerSelect(){
+        controlerDialog=new AlertDialog.Builder(SettingsActivity.this);
+        controlerDialog.setTitle("Select Controller:").setItems(itemControl, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ballSettings.controller=which;
+                controlerResult=itemControl[which];
+            }
+        });
+        controlerDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                initSettings();
+            }
+        });
+        controlerDialog.create().show();
+    }
+
+
 }

@@ -26,6 +26,8 @@ public class MainActivity extends Activity {
     public int screenWidth;
     public int screenHeight;
     public BallPerformance ball;
+
+    SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,16 +39,7 @@ public class MainActivity extends Activity {
         screenHeight=displayMetrics.heightPixels;
 
         ball=new BallPerformance();
-        SharedPreferences sharedPreferences=getSharedPreferences("Settings",0);
-        SharedPreferences.Editor editor =sharedPreferences.edit();
-        ball.directionX=sharedPreferences.getFloat("X",40);
-        ball.directionY=sharedPreferences.getFloat("Y",40);
-        ball.cicleR=sharedPreferences.getFloat("R",40);
-        ball.controller=sharedPreferences.getInt("Control",0);
-        ball.color=sharedPreferences.getInt("Color",Color.WHITE);
-
-
-
+        initBall();
         setContentView(new drawBall(this));
 
     }
@@ -99,7 +92,7 @@ public class MainActivity extends Activity {
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
             this.fixPosition();
-            paint.setColor(Color.WHITE);
+            paint.setColor(ball.color);
             buttonPaint.setColor(Color.BLUE);
             canvas.drawCircle(ball.directionX, ball.directionY, ball.cicleR, paint);
             canvas.drawCircle(screenWidth,screenHeight,150,buttonPaint);
@@ -128,16 +121,27 @@ public class MainActivity extends Activity {
 
     }
 
+    protected void initBall() {
+        sharedPreferences=getSharedPreferences("Settings",0);
+        ball.directionX=sharedPreferences.getFloat("X",40);
+        ball.directionY=sharedPreferences.getFloat("Y",40);
+        ball.cicleR=sharedPreferences.getFloat("R",40);
+        ball.controller=sharedPreferences.getInt("Control",0);
+        ball.color=sharedPreferences.getInt("Color",Color.WHITE);
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
-        SharedPreferences sharedPreferences = getSharedPreferences("Settings", 0);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putFloat("X", ball.directionX);
-        editor.putFloat("Y", ball.directionY);
-        editor.putFloat("R", ball.cicleR);
-        editor.putInt("Color",ball.color);
-        editor.putInt("Control",ball.controller);
-        editor.commit();
+//        SharedPreferences sharedPreferences = getSharedPreferences("Settings", 0);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        editor.putFloat("X", ball.directionX);
+//        editor.putFloat("Y", ball.directionY);
+//        editor.putFloat("R", ball.cicleR);
+//        editor.putInt("Color",ball.color);
+//        editor.putInt("Control",ball.controller);
+//        editor.commit();
     }
+
+
 }
