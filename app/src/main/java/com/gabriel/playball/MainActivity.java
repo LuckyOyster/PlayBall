@@ -23,8 +23,8 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-    public int screenWidth;
-    public int screenHeight;
+    public int screenWidth;//屏幕宽
+    public int screenHeight;//屏幕长
     public BallPerformance ball;
 
     SharedPreferences sharedPreferences;
@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
         screenHeight=displayMetrics.heightPixels;
 
         ball=new BallPerformance();
-        initBall();
+        initBall();//初始化小球属性
         setContentView(new drawBall(this));
 
     }
@@ -60,7 +60,7 @@ public class MainActivity extends Activity {
 
         }
 
-        public void fixPosition(){
+        public void fixPosition(){//修正小球位置
             if(ball.directionX+ball.cicleR>screenWidth){
                 ball.directionX=screenWidth-ball.cicleR;
             }
@@ -82,7 +82,7 @@ public class MainActivity extends Activity {
             }
         }
 
-        public boolean isInClickButton(){
+        public boolean isInClickButton(){//小球无法进入button区域
             if(Math.sqrt(Math.pow(screenWidth-ball.directionX,2)+Math.pow(screenHeight-ball.directionY,2))<150+ball.cicleR) {
                 return true;
             }
@@ -103,7 +103,7 @@ public class MainActivity extends Activity {
             ball.directionX=event.getX();
             ball.directionY=event.getY();
             int action=event.getAction();
-            if(action==MotionEvent.ACTION_UP&&isInClickButton()){
+            if(action==MotionEvent.ACTION_UP&&isInClickButton()){//绘制的button点击事件
                 Intent intent=new Intent(MainActivity.this,SettingsActivity.class);
                 intent.putExtra("performance", ball);
                 startActivityForResult(intent,0);

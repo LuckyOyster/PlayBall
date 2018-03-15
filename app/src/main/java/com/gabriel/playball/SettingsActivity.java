@@ -97,6 +97,7 @@ public class SettingsActivity extends Activity {
 
     }
 
+    //初始化设置界面
     private void initSettings(){
         switch(ballSettings.color){
             case Color.WHITE:
@@ -116,6 +117,7 @@ public class SettingsActivity extends Activity {
         diameterView.setText(String.valueOf(ballSettings.cicleR));
     }
 
+    //小Dialog
     private void showColorSelect() {
         colorDialog=new AlertDialog.Builder(SettingsActivity.this);
         colorDialog.setTitle("Select Color:").setItems(itemColor, new DialogInterface.OnClickListener() {
